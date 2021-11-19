@@ -1,0 +1,13 @@
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/new_note
+
+note over server:
+Add user input to server
+end note
+
+server-->browser: new_note
+
+note over browser:
+Perform URL redict to the address defined in the header's location (/note)
+Effectively reloads the note page 
+Repeats the steps outlined in Exercise 0.4
+end note
