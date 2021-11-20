@@ -1,0 +1,10 @@
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over browser:
+Add note to existing notes list
+redraw all notes
+end note
+
+note over server:
+Add user input to server
+end note
