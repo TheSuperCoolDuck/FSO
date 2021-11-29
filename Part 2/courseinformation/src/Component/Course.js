@@ -9,6 +9,11 @@ const Course=({course})=>{
                     {part.name} {part.exercises}
                 </p>
             )}   
+            <b>
+                total of {course.parts.reduce( (total, part) => {
+                    return total + part.exercises
+                }, 0)} exercises
+            </b>
         </div>
     )
 }
