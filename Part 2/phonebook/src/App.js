@@ -31,7 +31,7 @@ const PersonLine = ({person, handleDeletePerson})=>{
   return(
     <div>
       {person.name} {person.number}
-      <button onClick = {()=>handleDeletePerson(person.id)}>delete</button>
+      <button onClick = {()=>handleDeletePerson(person)}>delete</button>
     </div>
   )
 }
@@ -105,12 +105,15 @@ const App = ()=> {
     setNewNumber(event.target.value)
   }
 
-  const handleDeletePerson=(id)=>{
-    personService
-      .deletePerson(id)
-      .then(
-        setPersons(persons.filter(p=>p.id!==id))
+  const handleDeletePerson=(person)=>{
+    const confirm = window.confirm(`Delete ${person.name}?`)
+    if(confirm){
+      personService
+        .deletePerson(person.id)
+        .then(
+          setPersons(persons.filter(p=>p.id!==person.id))
       )
+    }
   }
 
 
