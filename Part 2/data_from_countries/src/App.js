@@ -1,15 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
-const CountryDisplay = ({filteredCountriesData}) =>{
-  if(filteredCountriesData.length>=10||filteredCountriesData.length===0){
-    return(
-      <div>
-        Too many matches, specify another filter
-      </div>
-    )
-  } else if(filteredCountriesData.length===1){
-    const countryData = filteredCountriesData[0] 
+const CountryView=({countryData})=>{
+  if(countryData===null){
+    return <></>
+  } else {
     return(
       <div>
         <h1>{countryData['name']['common']}</h1>
@@ -22,9 +17,25 @@ const CountryDisplay = ({filteredCountriesData}) =>{
         <img src={countryData['flags']['png']} alt="flag"/>
       </div>
     )
+  }
+}
+
+const CountryDisplay = ({filteredCountriesData, handleShowClick}) =>{
+
+ if(filteredCountriesData.length>=10||filteredCountriesData.length===0){
+    return(
+      <div>
+        Too many matches, specify another filter
+      </div>
+    )
+  } else if(filteredCountriesData.length===1){
+    return <></>
   } else {
     return(
-      filteredCountriesData.map(countryData =><div key={countryData['name']['common']}>{countryData['name']['common']}</div>)
+      filteredCountriesData.map(countryData =>
+      <div key={countryData['name']['common']}>
+        {countryData['name']['common']} <button onClick={()=>handleShowClick(countryData)}>show</button>
+      </div>)
     )
   }
 }
@@ -33,6 +44,7 @@ const App=()=> {
   const [countriesData, setCountriesData] = useState([])
   const [search, setSearch] = useState('')
   const [filteredCountriesData, setFilteredCountriesData] = useState([])
+  const [countryData, setCountryData] = useState(null)
 
   useEffect(()=>{
     axios.get('https://restcountries.com/v3.1/all').then(response=>{
@@ -43,9 +55,18 @@ const App=()=> {
   const handleSearchChange=(event)=>{
     let currentSearch = event.target.value
     setSearch(currentSearch)
+    setCountryData(null)
     if(currentSearch!==''){
-      setFilteredCountriesData(countriesData.filter(country=>country['name']['common'].toUpperCase().includes(currentSearch.toUpperCase())))
+      const currentFilteredCountriesData = countriesData.filter(country=>country['name']['common'].toUpperCase().includes(currentSearch.toUpperCase()))
+      setFilteredCountriesData(currentFilteredCountriesData)
+      if(currentFilteredCountriesData.length===1){
+        setCountryData(currentFilteredCountriesData[0])
+      }
     }
+  }
+
+  const handleShowClick=(data)=>{
+    setCountryData(data)
   }
 
   return (
@@ -56,7 +77,8 @@ const App=()=> {
           <input value={search} onChange={handleSearchChange}/>
         </div>
       </form>
-      <CountryDisplay filteredCountriesData={filteredCountriesData}/>
+      <CountryDisplay filteredCountriesData={filteredCountriesData} handleShowClick={handleShowClick}/>
+      <CountryView countryData={countryData}/>
     </div>
   )
 }
