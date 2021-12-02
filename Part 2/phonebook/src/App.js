@@ -27,12 +27,19 @@ const PersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumb
   )
 }
 
-const PersonLine = ({name, number})=><div>{name} {number}</div>
+const PersonLine = ({person, handleDeletePerson})=>{
+  return(
+    <div>
+      {person.name} {person.number}
+      <button onClick = {()=>handleDeletePerson(person.id)}>delete</button>
+    </div>
+  )
+}
 
-const Persons = ({filteredPersons})=> {
+const Persons = ({filteredPersons,handleDeletePerson})=> {
   return(
   filteredPersons().map(person=>
-  <PersonLine key={person.name} name={person.name} number={person.number}/>
+  <PersonLine key={person.name} person={person} handleDeletePerson={handleDeletePerson}/>
   ))
 }
 
@@ -79,7 +86,6 @@ const App = ()=> {
     setNewName('')
     setNewNumber('')
   }
-
   const filteredPersons=()=>{
     if(searchTerm===''){
       return persons
@@ -99,6 +105,15 @@ const App = ()=> {
     setNewNumber(event.target.value)
   }
 
+  const handleDeletePerson=(id)=>{
+    personService
+      .deletePerson(id)
+      .then(
+        setPersons(persons.filter(p=>p.id!==id))
+      )
+  }
+
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -106,7 +121,7 @@ const App = ()=> {
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons}/>
+      <Persons filteredPersons={filteredPersons} handleDeletePerson={handleDeletePerson}/>
     </div>
   )
 
