@@ -1,6 +1,34 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
+const api_key = process.env.REACT_APP_API_KEY
+
+const CapitalWeather=({capital})=>{
+  const [capitalWeather, setCapitalWeather] = useState(null)
+
+  useEffect(()=>{
+    const api = 'http://api.weatherstack.com/current?access_key='+api_key+'&query='+capital
+
+    axios.get(api).then(response=>{
+      setCapitalWeather(response.data)
+    })
+  },[capital])
+
+  if(capitalWeather!=null){
+    return(
+      <div>
+        <h2>Weather in {capital}</h2>
+        <div><strong>temperature: </strong>{capitalWeather['current']['temperature']} Celcius</div>
+        <img src={capitalWeather['current']['weather_icons']} alt="weather icon"/>
+        <div><strong>wind: </strong>{capitalWeather['current']['wind_speed']}mph direction {capitalWeather['current']['wind_dir']}</div>
+      </div>
+    )
+  } else {
+    return <></>
+  }
+
+}
+
 const CountryView=({countryData})=>{
   if(countryData===null){
     return <></>
@@ -15,6 +43,7 @@ const CountryView=({countryData})=>{
           {Object.values(countryData['languages']).map(lang=><li key={lang}>{lang}</li>)}
         </ul>
         <img src={countryData['flags']['png']} alt="flag"/>
+        <CapitalWeather capital={countryData['capital']}/>
       </div>
     )
   }
