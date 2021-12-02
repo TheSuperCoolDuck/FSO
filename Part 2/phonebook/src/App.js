@@ -58,13 +58,6 @@ const App = ()=> {
     })
   },[])
 
-  const isInPersons = (person)=>{
-    if(persons.find(p=>p.name===person.name)){
-      return true
-    } 
-    return false
-  }
-
   const addPerson = (event) => {
     event.preventDefault();
     
@@ -73,8 +66,16 @@ const App = ()=> {
       number: newNumber
     }
 
-    if(isInPersons(persons,personObject)){
-      window.alert(`${newName} is already added to phonebook`)
+    const foundPerson = persons.find(p=>p.name===personObject.name)
+
+    if(foundPerson){
+      const confirm = window.confirm(`${personObject.name} is already added on phonebook, replace the old number with a new one?`)
+      if(confirm){
+        personService
+          .update(foundPerson.id,personObject)
+          .then(returnedPerson=>
+            setPersons(persons.map(person=>person.id!==returnedPerson.id?person:returnedPerson)))
+      }
     } else {
       personService
         .create(personObject)
