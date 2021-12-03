@@ -108,6 +108,10 @@ const App = ()=> {
             setPersons(persons.map(person=>person.id!==returnedPerson.id?person:returnedPerson))
             displayNotification(`Updated ${returnedPerson.name}`)
           })
+          .catch(error=>{
+            displayNotification(`Imformation of ${personObject.name} has already been deleted`)
+            setPersons(persons.filter(p=>p.id!==foundPerson.id))
+          })
         }
     } else {
       personService
