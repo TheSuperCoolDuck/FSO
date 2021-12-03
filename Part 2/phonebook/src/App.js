@@ -1,6 +1,28 @@
 import React, {useState, useEffect} from 'react'
 import personService from './services/persons'
 
+const Notification=({message})=>{
+  const notificationStyle ={
+    color:'red',
+    background:'lightgray',
+    fontSize:20,
+    borderStyle:'solid',
+    borderRadius:5,
+    padding:10,
+    marginBottom:10
+  }
+
+  if(message===null){
+    return null
+  }
+
+  return(
+    <div style={notificationStyle}>
+      {message}
+    </div>
+  )
+}
+
 const Filter = ({searchTerm, handleSearchTermChange})=>{
   return(
     <form>
@@ -49,6 +71,7 @@ const App = ()=> {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(()=>{
     personService
@@ -57,6 +80,14 @@ const App = ()=> {
       setPersons(initialPersons)
     })
   },[])
+
+  const displayNotification = (message)=>{
+    setMessage(message)
+
+    setTimeout(()=>{
+      setMessage(null)
+    },2000)
+  }
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -73,14 +104,17 @@ const App = ()=> {
       if(confirm){
         personService
           .update(foundPerson.id,personObject)
-          .then(returnedPerson=>
-            setPersons(persons.map(person=>person.id!==returnedPerson.id?person:returnedPerson)))
-      }
+          .then(returnedPerson=>{
+            setPersons(persons.map(person=>person.id!==returnedPerson.id?person:returnedPerson))
+            displayNotification(`Updated ${returnedPerson.name}`)
+          })
+        }
     } else {
       personService
         .create(personObject)
         .then(returnedPerson=>{
           setPersons(persons.concat(returnedPerson))
+          displayNotification(`Added ${returnedPerson.name}`)
         })
     }
 
@@ -121,6 +155,7 @@ const App = ()=> {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter searchTerm={searchTerm} handleSearchTermChange={handleSearchTermChange}/>
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
