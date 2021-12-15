@@ -109,7 +109,7 @@ const App = ()=> {
             displayNotification(`Updated ${returnedPerson.name}`)
           })
           .catch(error=>{
-            displayNotification(`Imformation of ${personObject.name} has already been deleted`)
+            displayNotification(`Information of ${personObject.name} has already been deleted`)
             setPersons(persons.filter(p=>p.id!==foundPerson.id))
           })
         }
@@ -119,6 +119,9 @@ const App = ()=> {
         .then(returnedPerson=>{
           setPersons(persons.concat(returnedPerson))
           displayNotification(`Added ${returnedPerson.name}`)
+        })
+        .catch(error=>{
+          displayNotification(error.response.data.error)
         })
     }
 
